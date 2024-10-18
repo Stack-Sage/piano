@@ -1,0 +1,147 @@
+/* General reset */
+*, *::before, *::after {
+   box-sizing: border-box;
+}
+
+body {
+   margin: 0;
+   min-height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-image: url('https://images.pexels.com/photos/821735/pexels-photo-821735.jpeg?auto=compress&cs=tinysrgb&w=800');
+   background-repeat: no-repeat;
+   background-size: cover;
+   background-position: center;
+   font-family: Arial, sans-serif;
+}
+
+/* Piano styling */
+.piano {
+   display: flex;
+   transition: transform 0.5s ease;
+}
+
+.piano:hover {
+   transform: scale(1.03);
+}
+
+.key {
+   height: calc(var(--width) * 4);
+   width: var(--width);
+   border: 1px solid black;
+   transition: transform 0.3s ease; /* Ensure smooth transition */
+}
+
+.white {
+   --width: 100px;
+   background-color: rgba(231, 218, 200, 0.87);
+   z-index: 1;
+}
+
+.black {
+   --width: 60px;
+   background-color: rgba(0, 0, 0, 0.94);
+   margin-left: calc(var(--width) / -2);
+   margin-right: calc(var(--width) / -2);
+   z-index: 2;
+}
+
+/* Hover scaling effect */
+.white:hover, .black:hover {
+   transform: scale(1.03);
+   cursor: pointer;
+   transition-duration: 0.1s;
+}
+
+/* Scaling effect when the key is pressed */
+.white.active, .black.active {
+   transform: scale(1.03); /* Same scaling effect on active */
+   transition-duration: 0.1s;
+}
+
+.white.active {
+   background-color: rgba(211, 196, 175, 0.985);
+}
+
+.black.active {
+   background-color: rgb(8, 0, 0);
+}
+
+/* Text styling */
+.text {
+   text-align: center;
+   padding: 4px;
+   color: black;
+   text-shadow: 2px 1px 3px white, 2px 2px 1px black;
+   font-weight: bold;
+   position: absolute;
+   top: 0;
+   width: 100%;
+  
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+   .piano {
+      flex-wrap: wrap;
+   }
+
+   .key {
+      height: calc(var(--width) * 3.5);
+   }
+
+   .white {
+      --width: 12vw;
+   }
+
+   .black {
+      --width: 7vw;
+      margin-left: calc(var(--width) / -2);
+      margin-right: calc(var(--width) / -2);
+   }
+
+   .text {
+      font-size: 4vw;
+   }
+}
+
+@media (max-width: 480px) {
+   .white {
+      --width: 12vw;
+   }
+
+   .black {
+      --width: 7vw;
+      margin-left: calc(var(--width) / -2);
+      margin-right: calc(var(--width) / -2);
+   }
+
+   .text {
+      font-size: 6vw;
+   }
+}
+
+
+.footer {
+   opacity: 80%;
+   position: absolute;
+   bottom: 20px;
+   width: 100%;
+   text-align: center;
+   font-size: 1rem;
+   color: white;
+   text-shadow: 1px 1px 2px black;
+}
+
+.footer a {
+   color: #f5ba42;
+   text-decoration: none;
+   font-weight: bold;
+}
+
+.footer a:hover {
+   text-decoration: underline;
+   color: rgb(59, 254, 192);
+}
+
