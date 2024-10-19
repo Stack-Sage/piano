@@ -13,101 +13,120 @@ const notes = [
 ];
 
 const keys = document.querySelectorAll('.key');
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const noteBuffers = {};
+
+// Preload notes
+function preloadNotes() {
+   const promises = notes.map(note => 
+       fetch(`notes/${note}.mp3`)
+           .then(response => response.arrayBuffer())
+           .then(data => audioContext.decodeAudioData(data)
+               .then(buffer => { noteBuffers[note] = buffer; })
+           )
+           .catch(error => console.error('Error preloading audio:', error))
+   );
+
+   return Promise.all(promises);
+}
+
+preloadNotes();
+
+// Function to play the preloaded note
+function playPreloadedNote(note) {
+   if (!noteBuffers[note]) return;
+   const source = audioContext.createBufferSource();
+   source.buffer = noteBuffers[note];
+   source.connect(audioContext.destination);
+   source.start(0);
+}
+
+// Function to handle playing keys
+function handleKeyPlay(event) {
+   const targetKey = event.target.closest('.key');
+   if (targetKey) {
+       const note = targetKey.dataset.note;
+       targetKey.classList.add('active');
+       playPreloadedNote(note);
+   }
+}
+
+// Mouse and touch event listeners
+const handleMouseDown = (event) => {
+   event.preventDefault();
+   handleKeyPlay(event);
+   document.addEventListener('mousemove', handleKeyPlay);
+};
+
+const handleMouseUp = () => {
+   keys.forEach(key => key.classList.remove('active'));
+   document.removeEventListener('mousemove', handleKeyPlay);
+};
+
+const handleTouchStart = (event) => {
+   event.preventDefault();
+   handleKeyPlay(event.touches[0]);
+   document.addEventListener('touchmove', handleKeyPlay);
+};
+
+const handleTouchEnd = () => {
+   keys.forEach(key => key.classList.remove('active'));
+   document.removeEventListener('touchmove', handleKeyPlay);
+};
+
+// Add event listeners for mouse clicks on keys
+keys.forEach(key => {
+   key.addEventListener('mousedown', handleMouseDown);
+   key.addEventListener('mouseup', handleMouseUp);
+
+   // For touch devices
+   key.addEventListener('touchstart', handleTouchStart);
+   key.addEventListener('touchend', handleTouchEnd);
+});
 
 // Key mapping for keyboard input
 const keyMap = {
-   'z': 'A0',
-   's': 'Bb0',
-   'x': 'B0',
-   'c': 'C1',
-   'v': 'Db1',
-   'd': 'D1',
-   'f': 'Eb1',
-   'g': 'E1',
-   'h': 'F1',
-   'j': 'Gb1',
-   'k': 'G1',
-   'l': 'Ab1',
-   ';': 'A1',
-   'n': 'Bb1',
-   'm': 'B1',
-   ',': 'C2',
-   '.': 'Db2',
-   '/': 'D2',
-   'q': 'E2',
-   'w': 'F2',
-   'e': 'Gb2',
-   'r': 'G2',
-   't': 'Ab2',
-   'y': 'A2',
-   'u': 'Bb2',
-   'i': 'B2',
-   'o': 'C3',
-   'p': 'Db3',
-   '1': 'D3',
-   '2': 'Eb3',
-   '3': 'E3',
-   '4': 'F3',
-   '5': 'Gb3',
-   '6': 'G3',
-   '7': 'Ab3',
-   '8': 'A3',
-   '9': 'Bb3',
-   '0': 'B3',
-   '-': 'C4',
-   '=': 'Db4',
-   'q': 'D4',
-   'w': 'Eb4',
-   'e': 'E4',
-   'r': 'F4',
-   't': 'Gb4',
-   'y': 'G4',
-   'u': 'Ab4',
-   'i': 'A4',
-   'o': 'Bb4',
-   'p': 'B4',
-   '[': 'C5',
-   ']': 'Db5',
-   '\\': 'D5',
-   'A': 'E5',
-   'S': 'F5',
-   'D': 'Gb5',
-   'F': 'G5',
-   'G': 'Ab5',
-   'H': 'A5',
-   'J': 'Bb5',
-   'K': 'B5',
-   'L': 'C6',
-   ';': 'Db6',
-   '\'': 'D6',
+   // Your existing key mapping...
 };
 
-keys.forEach((key) => {
-   key.addEventListener('click', () => playNote(key));
-});
-
-// Function to play the note
-function playNote(key) {
-   const noteAudio = document.getElementById(key.dataset.note);
-   if (!noteAudio) return; // Exit if no audio element is found
-   noteAudio.currentTime = 0; // Reset audio to start
-   noteAudio.play(); // Play the note
-   key.classList.add('active'); // Add active class for visual feedback
-
-   // Remove active class when audio ends
-   noteAudio.addEventListener('ended', () => {
-       key.classList.remove('active');
-   });
-}
-
-// Add keyboard controls
-document.addEventListener('keydown', (e) => {
-   const noteToPlay = keyMap[e.key];
-   if (noteToPlay) {
-       const keyElement = document.querySelector(`.key[data-note="${noteToPlay}"]`);
+document.addEventListener('keydown', event => {
+   const note = keyMap[event.key];
+   if (note) {
+       const keyElement = [...keys].find(key => key.dataset.note === note);
        if (keyElement) {
-           playNote(keyElement);
+           keyElement.classList.add('active');
+           playPreloadedNote(note);
        }
    }
 });
 
+document.addEventListener('keyup', event => {
+   const note = keyMap[event.key];
+   if (note) {
+       const keyElement = [...keys].find(key => key.dataset.note === note);
+       if (keyElement) {
+           keyElement.classList.remove('active');
+       }
+   }
+});
+
+hueRange.addEventListener('input', function () {
+   const hueValue = this.value;
+   document.documentElement.style.setProperty('--hue', hueValue);
+   
+   // Select all white and black piano keys
+   const whiteKeys = document.querySelectorAll('.white'); // Change to your actual class name
+   const blackKeys = document.querySelectorAll('.black'); // Change to your actual class name
+
+   // Apply hue to white keys
+   whiteKeys.forEach(key => {
+       key.style.backgroundColor = `hsl(${hueValue}, 100%, 90%)`; // Lighter hue for white keys
+   });
+
+   // Apply hue to black keys
+   blackKeys.forEach(key => {
+       key.style.backgroundColor = `hsl(${hueValue}, 100%, ,40%)`; // Darker hue for black keys
+   });
+
+   console.log(`Hue set to: ${hueValue}`);
+});

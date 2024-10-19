@@ -4,26 +4,43 @@
    margin: 0;
    padding: 0;
 }
-
+:root {
+   --hue: 0; /* Default hue value */
+}
 body {
    
    min-height: 100vh;
    display: flex;
    justify-content: center;
    align-items: center;
-   background-image: url('img.jpeg');
+   background-image: url('img4.jpeg');
    background-repeat: no-repeat; /* Prevent the image from repeating */
    background-size: cover; /* Cover the entire viewport */
    background-position:  center; /* Center the image */
    font-family: Arial, sans-serif;
    overflow: hidden;
+   background-color: hsl(var(--hue), 100%, 50%); /* Use the CSS variable */
+
+   transition: background-color 0.5s; /* Smooth transition for hue changes */
 }
 
-
+.hue-changer {
+    position: absolute;
+    top:50px;
+    
+    font-size: 20px;
+    transform: scale(70%);
+    right: -25px;
+    background-color: rgba(249, 248, 248, 0.8);
+    padding: 2px;
+    border-radius: 5px;
+  
+}
 /* Piano styling */
 .piano {
+  
    padding: 10px;
-   scale: 90%;
+   scale: 85%;
    
    opacity: 85%;
    display: flex;
@@ -40,7 +57,7 @@ body {
 
 .key {
 
-
+   transition: background-color 0.3s; /* Smooth transition for color change */
    height: calc(var(--width) * 4);
    width: var(--width);
    border: 1px solid black;
@@ -50,13 +67,14 @@ body {
 .white {
    --width: 80px; /* Adjusted for visibility */
    background-color: rgba(255, 241, 222, 0.87);
+   transition: background-color 0.3s; 
    z-index: 1;
 }
 
 .black {
    --width: 50px;
-   
-   background-color: rgba(0, 0, 0, 0.874);
+   transition: background-color 0.3s; 
+   background-color: rgba(0, 0, 0, 0.993);
    margin-left: calc(var(--width) / -2);
    margin-right: calc(var(--width) / -2);
    z-index: 2;
@@ -64,16 +82,17 @@ body {
 
 /* Hover scaling effect */
 .white:hover, .black:hover {
-   transform: scale(1.03);
+   transform: scale(1.05);
    cursor: pointer;
 }
 
 .white.active, .black.active {
-   transform: scale(1.03);
+   transform: scale(1.2);
+   filter: brightness(90%);
 }
 
 .white.active {
-   background-color: rgba(248, 241, 231, 0.87);
+   background-color: rgb(224, 208, 185);
 }
 
 .black.active {
