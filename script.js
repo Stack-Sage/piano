@@ -69,6 +69,15 @@ const handleTouchStart = (event) => {
    document.addEventListener('touchmove', handleKeyPlay);
 };
 
+const handleTouchMove = (event) => {
+   event.preventDefault();
+   const touch = event.touches[0];
+   const targetKey = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.key');
+   if (targetKey) {
+       handleKeyPlay({ target: targetKey }); // Play the note for the touched key
+   }
+};
+
 const handleTouchEnd = () => {
    keys.forEach(key => key.classList.remove('active'));
    document.removeEventListener('touchmove', handleKeyPlay);
@@ -82,6 +91,7 @@ keys.forEach(key => {
    // For touch devices
    key.addEventListener('touchstart', handleTouchStart);
    key.addEventListener('touchend', handleTouchEnd);
+   key.addEventListener('touchmove', handleTouchMove); // Add touchmove listener
 });
 
 // Key mapping for keyboard input
